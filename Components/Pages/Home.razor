@@ -1,0 +1,25 @@
+﻿@page "/"
+
+<h3>Simple Grid Example</h3>
+
+<GridComponent Grid="@MyGrid" Headers="@ColumnHeaders" />
+
+@code {
+    private Grid? MyGrid { get; set; }
+    private List<string>? ColumnHeaders { get; set; }
+
+    protected override void OnInitialized()
+    {
+        ColumnHeaders = new List<string> { "Name", "Age", "City" };
+        MyGrid = new Grid();
+
+        for (int i = 1; i <= 100; i++)
+        {
+            string name = $"Person {i}";
+            string age = (20 + (i % 30)).ToString(); // Ages between 20 and 50
+            string city = $"City {i % 10 + 1}"; // Cities labeled 1 to 10
+
+            MyGrid.Add(new GridRow(name, age, city));
+        }
+    }
+}

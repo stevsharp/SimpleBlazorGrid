@@ -1,0 +1,126 @@
+﻿@using Microsoft.AspNetCore.Components.Rendering
+@using System.Linq
+
+<div>
+    <!-- Filter -->
+    <input @bind="FilterText" placeholder="Filter..." class="filter-input" />
+
+    <!-- Table -->
+    <table class="table">
+        <thead>
+            <tr>
+                @for (var i = 0; i < Headers?.Count; i++)
+                {
+                    <th @onclick="() =>  SortByColumnAsync(i)">
+                        @Headers[i]
+                        @if (CurrentSortColumn == i)
+                        {
+                            <span>@(IsSortDescending ? "▼" : "▲")</span>
+                        }
+                    </th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var row in PagedRows)
+            {
+                <tr>
+                    @foreach (var column in row.Columns)
+                    {
+                        <td>@column</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        <button @onclick="PrevPage" disabled="@IsFirstPage">Previous</button>
+        <span>Page @CurrentPage of @TotalPages</span>
+        <button @onclick="NextPage" disabled="@IsLastPage">Next</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Grid? Grid { get; set; }
+
+    [Parameter]
+    public List<string>? Headers { get; set; }
+
+    private string FilterText { get; set; } = string.Empty;
+    private int CurrentPage { get; set; } = 1;
+    private int PageSize { get; set; } = 5;
+    private int CurrentSortColumn { get; set; } = -1;
+    private bool IsSortDescending { get; set; }
+
+    private IEnumerable<GridRow> PagedRows => Grid!.GetFilteredAndSortedRows()
+                .Skip((CurrentPage - 1) * PageSize)
+                .Take(PageSize);
+
+    private int TotalPages => (int)Math.Ceiling((double)Grid!.GetFilteredAndSortedRows().Count() / PageSize);
+
+    private bool IsFirstPage => CurrentPage == 1;
+    private bool IsLastPage => CurrentPage == TotalPages;
+
+    protected override void OnParametersSet()
+    {
+        if (Grid != null)
+        {
+            Grid.Filter = row => string.IsNullOrEmpty(FilterText) || 
+                row.Columns.Any(col => col.Contains(FilterText, StringComparison.InvariantCultureIgnoreCase));
+        }
+    }
+
+    private async Task SortByColumnAsync(int columnIndex)
+    {
+        if (Grid is null)
+        {
+            throw new InvalidOperationException("Grid cannot be null.");
+        }
+
+        if (Grid.Rows == null || !Grid.Rows.Any())
+        {
+            throw new InvalidOperationException("Grid rows cannot be null or empty.");
+        }
+
+        if (columnIndex < 0 || columnIndex >= Grid.Rows.First().Columns.Length)
+        {
+            throw new ArgumentOutOfRangeException(nameof(columnIndex), "Column index is out of range.");
+        }
+
+        if (CurrentSortColumn == columnIndex)
+        {
+            IsSortDescending = !IsSortDescending;
+        }
+        else
+        {
+            CurrentSortColumn = columnIndex;
+            IsSortDescending = false;
+        }
+
+        Grid.SortBy = row => row.Columns[columnIndex];
+        Grid.IsSortDescending = IsSortDescending;
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void NextPage()
+    {
+        if (!IsLastPage)
+        {
+            CurrentPage++;
+            StateHasChanged();
+        }
+    }
+
+    private void PrevPage()
+    {
+        if (!IsFirstPage)
+        {
+            CurrentPage--;
+            StateHasChanged();
+        }
+    }
+}
