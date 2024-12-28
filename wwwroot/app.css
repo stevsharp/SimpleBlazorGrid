@@ -102,3 +102,88 @@ h1:focus {
             cursor: not-allowed;
             background-color: #ccc;
         }
+
+.grid-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 800px;
+    margin: auto;
+}
+
+.filter-section {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 1rem;
+}
+
+.filter-input {
+    padding: 0.5rem;
+    font-size: 1rem;
+    width: 100%;
+    max-width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.table-section {
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+    .table th, .table td {
+        border: 1px solid #ddd;
+        padding: 0.75rem;
+        text-align: left;
+    }
+
+    .table th {
+        background-color: #f4f4f4;
+        font-weight: bold;
+    }
+
+    .table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .table tr:hover {
+        background-color: #f1f1f1;
+    }
+
+.pagination-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.pagination-button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+    .pagination-button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+.pagination-info {
+    font-size: 1rem;
+    color: #555;
+}
+
+.debug-info {
+    font-size: 0.9rem;
+    color: #999;
+    text-align: left;
+}

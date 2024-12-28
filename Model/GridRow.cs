@@ -1,10 +1,5 @@
 ﻿
-public class GridRow
+public class GridRow(params string[] columns)
 {
-    public string[] Columns { get; }
-
-    public GridRow(params string[] columns)
-    {
-        Columns = columns;
-    }
+    public string[] Columns { get; } = columns;
 }

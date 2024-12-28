@@ -1,7 +1,9 @@
 ﻿
+using System.Linq.Expressions;
+
 public class Grid
 {
-    public List<GridRow> Rows { get; private set; } = new();
+    public List<GridRow> Rows { get; set; } = new();
     public Func<GridRow, bool>? Filter { get; set; }
     public Func<GridRow, object>? SortBy { get; set; }
     public bool IsSortDescending { get; set; }

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35527.113 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorSimpleGrid", "BlazorSimpleGrid\BlazorSimpleGrid.csproj", "{342524CC-D161-46DF-8ACC-1389AF694DAD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorSimpleGrid", "BlazorSimpleGrid.csproj", "{EDFA1023-6A66-4D44-B9F0-16E58BE0E931}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{342524CC-D161-46DF-8ACC-1389AF694DAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{342524CC-D161-46DF-8ACC-1389AF694DAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{342524CC-D161-46DF-8ACC-1389AF694DAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{342524CC-D161-46DF-8ACC-1389AF694DAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDFA1023-6A66-4D44-B9F0-16E58BE0E931}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDFA1023-6A66-4D44-B9F0-16E58BE0E931}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDFA1023-6A66-4D44-B9F0-16E58BE0E931}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDFA1023-6A66-4D44-B9F0-16E58BE0E931}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

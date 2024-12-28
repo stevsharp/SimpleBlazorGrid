@@ -1,44 +1,57 @@
 ﻿@using Microsoft.AspNetCore.Components.Rendering
 @using System.Linq
 
-<div>
-    <!-- Filter -->
-    <input @bind="FilterText" placeholder="Filter..." class="filter-input" />
+<div class="grid-container">
+    <!-- Filter Section -->
+    <div class="filter-section">
+        <input @bind="FilterText" placeholder="Filter..." class="filter-input" />
+    </div>
 
-    <!-- Table -->
-    <table class="table">
-        <thead>
-            <tr>
-                @for (var i = 0; i < Headers?.Count; i++)
-                {
-                    <th @onclick="() =>  SortByColumnAsync(i)">
-                        @Headers[i]
-                        @if (CurrentSortColumn == i)
-                        {
-                            <span>@(IsSortDescending ? "▼" : "▲")</span>
-                        }
-                    </th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var row in PagedRows)
-            {
+    <!-- Table Section -->
+    <div class="table-section">
+        <table class="table">
+            <thead>
                 <tr>
-                    @foreach (var column in row.Columns)
+                    @foreach (var column in Columns)
                     {
-                        <td>@column</td>
+                        <th>@column.Title</th>
                     }
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @if (PagedRows.Any())
+                {
+                    @foreach (var row in PagedRows)
+                    {
+                        <tr>
+                            @foreach (var column in Columns)
+                            {
+                                <td>@(row.Columns.Length > column.ColumnIndex ? row.Columns[column.ColumnIndex] : "")</td>
+                            }
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="@Columns.Count" class="text-center">No data available</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 
-    <!-- Pagination -->
-    <div class="pagination">
-        <button @onclick="PrevPage" disabled="@IsFirstPage">Previous</button>
-        <span>Page @CurrentPage of @TotalPages</span>
-        <button @onclick="NextPage" disabled="@IsLastPage">Next</button>
+    <!-- Pagination Section -->
+    <div class="pagination-section">
+        <button @onclick="PrevPage" disabled="@IsFirstPage" class="pagination-button">Previous</button>
+        <span class="pagination-info">Page @CurrentPage of @TotalPages</span>
+        <button @onclick="NextPage" disabled="@IsLastPage" class="pagination-button">Next</button>
+    </div>
+
+    <!-- Debug Information (Optional) -->
+    <div class="debug-info">
+        <p>Total Rows: @Grid?.Rows.Count</p>
+        <p>Paged Rows: @PagedRows.Count()</p>
     </div>
 </div>
 
@@ -47,7 +60,11 @@
     public Grid? Grid { get; set; }
 
     [Parameter]
-    public List<string>? Headers { get; set; }
+    public List<GridRow>? Rows { get; set; }
+
+    [Parameter]
+    public List<GridColumn>? Columns { get; set; }
+
 
     private string FilterText { get; set; } = string.Empty;
     private int CurrentPage { get; set; } = 1;
@@ -59,7 +76,9 @@
                 .Skip((CurrentPage - 1) * PageSize)
                 .Take(PageSize);
 
-    private int TotalPages => (int)Math.Ceiling((double)Grid!.GetFilteredAndSortedRows().Count() / PageSize);
+    private int TotalPages => Grid == null || Grid.GetFilteredAndSortedRows() == null
+        ? 0
+        : (int)Math.Ceiling((double)Grid.GetFilteredAndSortedRows().Count() / PageSize);
 
     private bool IsFirstPage => CurrentPage == 1;
     private bool IsLastPage => CurrentPage == TotalPages;
@@ -72,7 +91,6 @@
                 row.Columns.Any(col => col.Contains(FilterText, StringComparison.InvariantCultureIgnoreCase));
         }
     }
-
     private async Task SortByColumnAsync(int columnIndex)
     {
         if (Grid is null)
