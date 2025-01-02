@@ -1,0 +1,157 @@
+﻿@typeparam TRowData
+
+<CascadingValue IsFixed="true" Value="this">@ChildContent</CascadingValue>
+
+<div class="grid-container">
+    <div class="filter-section">
+        <input @bind="FilterText" placeholder="Filter..." class="filter-input" />
+    </div>
+
+    <table @attributes="@TableAttributes">
+        <thead>
+            <tr>
+                @foreach (var column in columns)
+                {
+                    <th @onclick="(() => SortBy(column.SortKey))" style="cursor: pointer;">
+                        @column.HeaderTemplate
+
+                        @if (column.SortKey == CurrentSortKey)
+                        {
+                            <span>@(IsAscending ? "↑" : "↓")</span>
+                        }
+
+                    </th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @if (PagedItems != null)
+            {
+                var index = 0;
+                foreach (var item in PagedItems)
+                {
+                    <tr @key="item.GetHashCode()" class="@(RowClass?.Invoke(item, index++))">
+                        @foreach (var column in columns)
+                        {
+                            @column.CellTemplate(item)
+                        }
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        <button @onclick="PreviousPage" disabled="@IsFirstPage">Previous</button>
+        <span>Page @CurrentPage of @TotalPages</span>
+        <button @onclick="NextPage" disabled="@IsLastPage">Next</button>
+    </div>
+</div>
+
+@code {
+    private string FilterText { get; set; } = string.Empty;
+    private string CurrentSortKey { get; set; }
+    private bool IsAscending { get; set; } = true;
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> TableAttributes { get; set; }
+
+    [Parameter]
+    public ICollection<TRowData> Items { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public Func<TRowData, int, string> RowClass { get; set; }
+
+    [Parameter]
+    public int PageSize { get; set; } = 5;
+
+    private readonly List<GridColumn<TRowData>> columns = new List<GridColumn<TRowData>>();
+
+    private int CurrentPage { get; set; } = 1;
+
+    private IEnumerable<TRowData> PagedItems => SortedAndFilteredItems?.Skip((CurrentPage - 1) * PageSize).Take(PageSize);
+
+    private int TotalPages => Items != null
+        ? (int)Math.Ceiling((double)SortedAndFilteredItems?.Count() / PageSize)
+        : 1;
+
+    private bool IsFirstPage => CurrentPage == 1;
+    private bool IsLastPage => CurrentPage == TotalPages;
+
+    internal void AddColumn(GridColumn<TRowData> column)
+    {
+        columns.Add(column);
+    }
+
+    private IEnumerable<TRowData> SortedAndFilteredItems
+    {
+        get
+        {
+            var filteredItems = Items
+                ?.Where(item => string.IsNullOrEmpty(FilterText) ||
+                                columns.Any(c => c.Filterable && c.CellTemplate(item)?.ToString()?.Contains(FilterText, 
+                                    StringComparison.InvariantCultureIgnoreCase) == true))
+                .ToList();
+
+            if (string.IsNullOrEmpty(CurrentSortKey))
+            {
+                return filteredItems;
+            }
+
+            var column = columns.FirstOrDefault(c => c.SortKey == CurrentSortKey);
+            if (column == null || column.Expression == null)
+            {
+                return filteredItems;
+            }
+
+            var compiledExpression = column.Expression.Compile();
+
+            return IsAscending
+                ? filteredItems.OrderBy(compiledExpression).ToList()
+                : filteredItems.OrderByDescending(compiledExpression).ToList();
+        }
+    }
+
+    private void SortBy(string sortKey)
+    {
+        if (CurrentSortKey == sortKey)
+        {
+            IsAscending = !IsAscending;
+        }
+        else
+        {
+            CurrentSortKey = sortKey;
+            IsAscending = true;
+        }
+
+        CurrentPage = 1; // Reset to the first page after sorting
+        StateHasChanged();
+    }
+
+    private void NextPage()
+    {
+        if (!IsLastPage)
+        {
+            CurrentPage++;
+        }
+    }
+
+    private void PreviousPage()
+    {
+        if (!IsFirstPage)
+        {
+            CurrentPage--;
+        }
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            StateHasChanged();
+        }
+    }
+}

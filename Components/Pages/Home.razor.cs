@@ -8,8 +8,33 @@ public partial class Home
 
     private Grid? MyGrid { get; set; }
 
+    private List<Customer> customers;
+
+
+    public class Customer
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public DateTime DateOfBirth { get; set; }
+        public int OrdersCount { get; set; }
+    }
+
     protected override void OnInitialized()
     {
+        customers =
+        [
+            new Customer { Id = 1, Name = "Amy Mayer_1", DateOfBirth = new DateTime(1960, 2, 22), OrdersCount = 2 },
+            new Customer { Id = 2, Name = "Julie Shelton_2", DateOfBirth = new DateTime(2000, 6, 29), OrdersCount = 4 },
+            new Customer { Id = 3, Name = "Stephanie Clarke_3", DateOfBirth = new DateTime(2000, 8, 2), OrdersCount = 6 },
+            new Customer { Id = 4, Name = "Michael King_4", DateOfBirth = new DateTime(1999, 8, 4), OrdersCount = 10 },
+            new Customer { Id = 5, Name = "Michael Hopkins_5", DateOfBirth = new DateTime(1959, 8, 4), OrdersCount = 3 },
+            new Customer { Id = 6, Name = "Amy Mayer_6", DateOfBirth = new DateTime(1960, 2, 22), OrdersCount = 2 },
+            new Customer { Id = 7, Name = "Julie Shelton_7", DateOfBirth = new DateTime(2000, 6, 29), OrdersCount = 4 },
+            new Customer { Id = 8, Name = "Stephanie Clarke_8", DateOfBirth = new DateTime(2000, 8, 2), OrdersCount = 6 },
+            new Customer { Id = 9, Name = "Michael King_9", DateOfBirth = new DateTime(1999, 8, 4), OrdersCount = 10 },
+            new Customer { Id = 10, Name = "Michael Hopkins_10", DateOfBirth = new DateTime(1959, 8, 4), OrdersCount = 3 },
+        ];
+
         Columns =
         [
             new GridColumn("Nr", 0),

@@ -1,7 +1,4 @@
-﻿
-using System.Linq.Expressions;
-
-public class Grid
+﻿public class Grid
 {
     public List<GridRow> Rows { get; set; } = new();
     public Func<GridRow, bool>? Filter { get; set; }

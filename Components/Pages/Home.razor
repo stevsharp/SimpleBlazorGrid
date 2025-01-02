@@ -4,3 +4,20 @@
 
 <GridComponent Grid="MyGrid" Rows="Rows" Columns="Columns" />
 
+<Grid Items="customers" class="table table-bordered" PageSize="5" 
+    RowClass='(row, index) => row.OrdersCount > 5 ? "table-success" : ""'>
+    <GridColumn SortByExpression="c => c.Id" TRowData="Customer" Expression="c => c.Id" />
+    <GridColumn SortByExpression="c => c.Name" TRowData="Customer" Expression="c => c.Name" />
+    <GridColumn SortByExpression="c => c.DateOfBirth" TRowData="Customer" Expression="c => c.DateOfBirth" Format="d" />
+    <GridColumn TRowData="Customer" Title="# Orders">@context.OrdersCount orders</GridColumn>
+    <GridColumn TRowData="Customer">
+        <a href="/edit/@context.Id">edit</a>
+    </GridColumn>
+</Grid>
+
+
+
+
+
+
+
